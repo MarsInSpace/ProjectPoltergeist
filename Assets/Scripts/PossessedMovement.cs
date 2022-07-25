@@ -21,5 +21,10 @@ public class PossessedMovement : MonoBehaviour
             Rigidbody rb = GetComponent<Rigidbody>();
             rb.isKinematic = true;
         }
+        else {
+            Rigidbody rb = GetComponent<Rigidbody>();
+            rb.isKinematic = false;
+            transform.parent = null;
+        }
     }
 }

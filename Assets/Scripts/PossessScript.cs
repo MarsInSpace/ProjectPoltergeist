@@ -20,9 +20,12 @@ public class PossessScript : MonoBehaviour
     {
         ShootRay();
 
-        if(Input.GetMouseButtonUp(0) && ManagerScript.IsOverPossessable == true) {
+        if(Input.GetMouseButtonUp(0) && ManagerScript.IsOverPossessable == true && ManagerScript.IsPossessed == false) {
             Debug.Log("Clicked");
             StartCoroutine(Possess());
+        }
+        else if(Input.GetKey(KeyCode.Space) && ManagerScript.IsPossessed == true) {
+            StartCoroutine(Unpossess());
         }
     }
 
@@ -47,6 +50,15 @@ public class PossessScript : MonoBehaviour
 
         GameObjectHit.transform.parent = transform;
         Debug.Log("IsParented");
+
+        MeshRenderer renderer = GetComponent<MeshRenderer>();
+        renderer.enabled = !renderer.enabled;
+
+        yield return null;
+    }
+
+    IEnumerator Unpossess() {
+        ManagerScript.IsPossessed = false;
 
         MeshRenderer renderer = GetComponent<MeshRenderer>();
         renderer.enabled = !renderer.enabled;
