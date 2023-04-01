@@ -8,6 +8,8 @@ TagManager:
   - Visitor
   - Possessable
   - GameManager
+  - Walkthroughable
+  - Glass
   layers:
   - Default
   - TransparentFX
@@ -17,7 +19,7 @@ TagManager:
   - UI
   - Possessables
   - Player
-  - 
+  - Solid
   - 
   - 
   - 

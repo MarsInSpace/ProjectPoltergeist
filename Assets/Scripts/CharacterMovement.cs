@@ -6,13 +6,13 @@ public class CharacterMovement : MonoBehaviour
 {
     private Rigidbody PlayerRigidbody;
 
-    public float Speed = 10f;
-    public float RotationSpeed = 1f;
+    public float Speed = 3f;
+    public float RotationSpeed = 0.3f;
     private float turnY;
 
     void Start() {
         PlayerRigidbody = GetComponent<Rigidbody>();
-
+        PlayerRigidbody.rotation = Quaternion.Euler(0f, -90f, 0f);
     }
 
     void Update() {
@@ -31,6 +31,7 @@ public class CharacterMovement : MonoBehaviour
         PlayerRigidbody.velocity = movement;
  
         turnY += inputMove.x * Time.deltaTime;
+
         PlayerRigidbody.rotation = Quaternion.Euler(0.0f, turnY, 0.0f);
     }
 }

@@ -16,7 +16,17 @@ public class VisitorMovement : MonoBehaviour
     public bool isAtDestination = false;
     private bool isCoroutineExecuting = false;
 
+    [SerializeField] private Exhibits ExhibitsToObserve;
+
+    private void OnGlassDestroyed(Collision collisionInfo) {
+        Debug.Log("Observer Responds");
+    }
+
     void Start(){
+        if (ExhibitsToObserve != null) {
+            ExhibitsToObserve.GotHit += OnGlassDestroyed;
+        }
+
         Visitor = GetComponent<NavMeshAgent>();
 
         foreach (GameObject visitorGoal in GameObject.FindGameObjectsWithTag("VisitorGoals")){
@@ -29,7 +39,7 @@ public class VisitorMovement : MonoBehaviour
             PickRandomGoal();
         }
         if(isAtDestination){
-            StartCoroutine(ExecuteAfterTime(5f));
+            StartCoroutine(ExecuteAfterTime(Random.Range(2f, 8f)));
         }
         Console.WriteLine(Visitor.destination);
     }
@@ -54,5 +64,13 @@ public class VisitorMovement : MonoBehaviour
 
         Visitor.destination = GoalLocation.position;
         isAtDestination = false;
+    }
+
+    private void OnDestroy()
+    {
+        if (ExhibitsToObserve != null)
+        {
+            ExhibitsToObserve.GotHit -= OnGlassDestroyed;
+        }
     }
 }
