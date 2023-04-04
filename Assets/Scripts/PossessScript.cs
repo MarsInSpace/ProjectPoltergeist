@@ -35,10 +35,15 @@ public class PossessScript : MonoBehaviour
             StartCoroutine(Possess());
         }
         else if(Input.GetKey(KeyCode.Space) && ManagerScript.IsPossessed == true) {
+            
+            //PossessedObject.AddComponent<Rigidbody>();
             StartCoroutine(Unpossess());
         }
         else if(Input.GetMouseButton(0) && ManagerScript.IsPossessed == true) {
-            ThrowPossessable(hit);
+            //ThrowPossessable(hit);
+            StartCoroutine(Throw(hit));
+
+            //why no rigidbody found??
         }
     }
 
@@ -56,10 +61,15 @@ public class PossessScript : MonoBehaviour
     }
 
     void ThrowPossessable(RaycastHit hitpoint) {
+        StartCoroutine(Unpossess());
+        if(PossessedRigidbody = null){
+            Debug.Log(PossessedObject);
+            PossessedObject.AddComponent<Rigidbody>();
+            PossessedRigidbody = PossessedObject.GetComponent<Rigidbody>();
+        }
+        Debug.Log(PossessedRigidbody);
         PossessedRigidbody.velocity = (hitpoint.point - transform.position).normalized * throwVelocity;
         PossessedRigidbody.rotation = Quaternion.LookRotation(PossessedRigidbody.velocity);
-
-        StartCoroutine(Unpossess());
     }
 
     void OnCollisionEnter(Collision collisionInfo)
@@ -79,19 +89,61 @@ public class PossessScript : MonoBehaviour
         PossessedRigidbody = GameObjectHit.GetComponent<Rigidbody>();
         Debug.Log("IsParented");
 
-        MeshRenderer renderer = GetComponent<MeshRenderer>();
-        renderer.enabled = !renderer.enabled;
+        Destroy(PossessedRigidbody);
+
+        Camera mainCamera = GetComponentInChildren<Camera>();
+        mainCamera.transform.parent = PossessedObject.transform;
+
+        ChangeComponentStatus();
 
         yield return null;
     }
 
     IEnumerator Unpossess() {
+        Camera mainCamera = PossessedObject.GetComponentInChildren<Camera>();
+        mainCamera.transform.parent = transform;
+
+        PossessedObject.AddComponent<Rigidbody>();
+
+        Transform possessedChild = transform.GetChild(0);
+        possessedChild.transform.parent = null;
+
         ManagerScript.IsPossessed = false;
         PossessedObject = null;
 
+        ChangeComponentStatus();
+
+        yield return null;
+    }
+
+    IEnumerator Throw(RaycastHit hitpoint) {
+        Camera mainCamera = PossessedObject.GetComponentInChildren<Camera>();
+        mainCamera.transform.parent = transform;
+
+        PossessedObject.AddComponent<Rigidbody>();
+
+        Transform possessedChild = transform.GetChild(0);
+        possessedChild.transform.parent = null;
+
+        ManagerScript.IsPossessed = false;
+        PossessedObject = null;
+
+        ChangeComponentStatus();
+
+        PossessedRigidbody.velocity = (hitpoint.point - transform.position).normalized * throwVelocity;
+        PossessedRigidbody.rotation = Quaternion.LookRotation(PossessedRigidbody.velocity);
+
+        yield return null;
+    }
+
+    void ChangeComponentStatus(){
         MeshRenderer renderer = GetComponent<MeshRenderer>();
         renderer.enabled = !renderer.enabled;
 
-        yield return null;
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
+        rigidbody.useGravity = !rigidbody.useGravity;
+
+        Collider collider = GetComponent<Collider>();
+        collider.enabled = !collider.enabled;
     }
 }

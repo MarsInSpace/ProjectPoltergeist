@@ -1,28 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class GlassExhibits : Exhibits
+public class GlassExhibits : MonoBehaviour
 {
+    [HideInInspector]
+    public GameObject GameManager;
+    public GameManager ManagerScript;
+
     [SerializeField]
     List<GameObject> GlassChildren = new List<GameObject>();
 
-    [SerializeField] private Exhibits ExhibitsToObserve;
+    public CollisionEvent onGlassDestroyed;
+
+    //private bool IsDestroyed = false;
     
 
     // Start is called before the first frame update
     void Start()
     {
-        if (ExhibitsToObserve != null) {
-            ExhibitsToObserve.GotHit += DestroyGlass;
-        }
+        GameManager = GameObject.FindGameObjectWithTag("GameManager");
+        ManagerScript = GameManager.GetComponent<GameManager>();
 
         foreach(Transform child in transform) {
             GameObject glassChild = child.gameObject;
             GlassChildren.Add(glassChild);
         }
-
-        Debug.Log(GlassChildren.Count);
     }
 
     // Update is called once per frame
@@ -31,19 +35,19 @@ public class GlassExhibits : Exhibits
         
     }
 
-    public void DestroyGlass(Collision collisionInfo) {
+    void OnCollisionEnter(Collision collisionInfo)
+    {
         if(collisionInfo.gameObject.tag == "Possessable" && !ManagerScript.IsPossessed) {
+            DestroyGlass();
+            Debug.Log("Recognised Possessable One");
+            onGlassDestroyed.Invoke(collisionInfo);
+        }
+        //IsDestroyed = true;
+    }
+
+    void DestroyGlass() {
             for(int i = 0; i < GlassChildren.Count; i++) {
                 Rigidbody rigidbody = GlassChildren[i].AddComponent<Rigidbody>();
             }
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (ExhibitsToObserve != null)
-        {
-            ExhibitsToObserve.GotHit -= DestroyGlass;
-        }
     }
 }
