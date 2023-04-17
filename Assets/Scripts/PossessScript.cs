@@ -35,15 +35,10 @@ public class PossessScript : MonoBehaviour
             StartCoroutine(Possess());
         }
         else if(Input.GetKey(KeyCode.Space) && ManagerScript.IsPossessed == true) {
-            
-            //PossessedObject.AddComponent<Rigidbody>();
             StartCoroutine(Unpossess());
         }
         else if(Input.GetMouseButton(0) && ManagerScript.IsPossessed == true) {
-            //ThrowPossessable(hit);
             StartCoroutine(Throw(hit));
-
-            //why no rigidbody found??
         }
     }
 
@@ -58,18 +53,6 @@ public class PossessScript : MonoBehaviour
         {
             GameObjectHit = null;
         } 
-    }
-
-    void ThrowPossessable(RaycastHit hitpoint) {
-        StartCoroutine(Unpossess());
-        if(PossessedRigidbody = null){
-            Debug.Log(PossessedObject);
-            PossessedObject.AddComponent<Rigidbody>();
-            PossessedRigidbody = PossessedObject.GetComponent<Rigidbody>();
-        }
-        Debug.Log(PossessedRigidbody);
-        PossessedRigidbody.velocity = (hitpoint.point - transform.position).normalized * throwVelocity;
-        PossessedRigidbody.rotation = Quaternion.LookRotation(PossessedRigidbody.velocity);
     }
 
     void OnCollisionEnter(Collision collisionInfo)
@@ -121,6 +104,7 @@ public class PossessScript : MonoBehaviour
         mainCamera.transform.parent = transform;
 
         PossessedObject.AddComponent<Rigidbody>();
+        PossessedRigidbody = PossessedObject.GetComponent<Rigidbody>();
 
         Transform possessedChild = transform.GetChild(0);
         possessedChild.transform.parent = null;

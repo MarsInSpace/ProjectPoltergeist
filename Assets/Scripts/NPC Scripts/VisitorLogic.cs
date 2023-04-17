@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 public class VisitorLogic : MonoBehaviour
 {
-    float ReactDistance = 5f;
+    float ReactDistance = 3f;
 
     public UnityEvent onFlightReaction;
 
